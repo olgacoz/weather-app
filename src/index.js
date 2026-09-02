@@ -5,7 +5,7 @@ const API_KEY = "2LYJU4DK9EKDVFVNJ9ZNC9RYP";
 async function fetchWeatherData(location) {
   try {
     const response = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=${API_KEY}`,
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/today?unitGroup=metric&elements=add%3Aaqieur&key=${API_KEY}&contentType=json`
     );
     const weatherData = await response.json();
     console.log(weatherData);
