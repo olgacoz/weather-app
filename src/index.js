@@ -15,3 +15,21 @@ async function fetchWeatherData(location) {
 }
 
 fetchWeatherData("Kyrenia");
+
+/* Data I want to get
+Condition of Weather (e.g. Partially cloudy)
+Weather Icon (e.g. partly-cloudy-day)
+Current temp
+Minimum temp
+Maximum temp
+Feels Like
+
+Chance of rain
+Rain amount
+Wind speed and direction
+UV index
+AQI (EU)
+Pressure
+Humidity
+Cloud Coverage
+*/
