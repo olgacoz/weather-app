@@ -2,6 +2,9 @@ import "./styles.css";
 
 const API_KEY = "2LYJU4DK9EKDVFVNJ9ZNC9RYP";
 
+const formEl = document.querySelector("form");
+const inputEl = document.querySelector("input");
+
 async function fetchWeatherData(location) {
   const response = await fetch(
     `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/today?unitGroup=metric&elements=add%3Aaqieur&key=${API_KEY}&contentType=json`,
@@ -15,7 +18,7 @@ async function fetchWeatherData(location) {
    mph (miles per hour) version of wind speed to the
    returned 
 */
-function cleanWeatherData(data) {
+function formatWeatherData(data) {
   return {
     resolvedAddress: data.resolvedAddress,
     currentConditions: {
@@ -40,9 +43,22 @@ function cleanWeatherData(data) {
   };
 }
 
-fetchWeatherData("Kyrenia")
-  .then((data) => console.log(cleanWeatherData(data)))
-  .catch(console.log);
+formEl.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const location = inputEl.value.trim();
+  if (location === "") {
+    return;
+  }
+
+  try {
+    const rawData = await fetchWeatherData(location);
+    const weatherData = formatWeatherData(rawData);
+    console.log(weatherData);
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 /* Data I want to get
 Condition of Weather (e.g. Partially cloudy)
