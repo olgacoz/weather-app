@@ -25,20 +25,25 @@ function formatWeatherData(data) {
       aqieur: data.currentConditions.aqieur,
       cloudcover: data.currentConditions.cloudcover,
       conditions: data.currentConditions.conditions,
-      feelslike: data.currentConditions.feelslike,
+      feelslikeC: data.currentConditions.feelslike,
+      feelslikeF: celciusToFahrenheit(data.currentConditions.feelslike),
       humidity: data.currentConditions.humidity,
       icon: data.currentConditions.icon,
       precip: data.currentConditions.precip,
       precipprob: data.currentConditions.precipprob,
       pressure: data.currentConditions.pressure,
-      temp: data.currentConditions.temp,
+      tempC: data.currentConditions.temp,
+      tempF: celciusToFahrenheit(data.currentConditions.temp),
       uvindex: data.currentConditions.uvindex,
       winddir: data.currentConditions.winddir,
-      windspeed: data.currentConditions.windspeed,
+      windspeedKph: data.currentConditions.windspeed,
+      windspeedMph: kphToMph(data.currentConditions.windspeed),
     },
     days: data.days.map((day) => ({
-      tempmax: day.tempmax,
-      tempmin: day.tempmin,
+      tempmaxC: day.tempmax,
+      tempmaxF: celciusToFahrenheit(day.tempmax),
+      tempminC: day.tempmin,
+      tempminF: celciusToFahrenheit(day.tempmin),
     })),
   };
 }
@@ -59,6 +64,16 @@ formEl.addEventListener("submit", async (e) => {
     console.log(err);
   }
 });
+
+function celciusToFahrenheit(c) {
+  const f = c * (9 / 5) + 32;
+  return Math.round(f * 10) / 10;
+}
+
+function kphToMph(kph) {
+  const mph = kph * 0.621371;
+  return Math.round(mph * 10) / 10;
+}
 
 /* Data I want to get
 Condition of Weather (e.g. Partially cloudy)
