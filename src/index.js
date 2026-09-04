@@ -2,8 +2,11 @@ import "./styles.css";
 
 const API_KEY = "2LYJU4DK9EKDVFVNJ9ZNC9RYP";
 
+let currentWeatherData = null;
+
 const formEl = document.querySelector("form");
 const inputEl = document.getElementById("location-input");
+const unitToggleEl = document.getElementById("unit-toggle");
 const resolvedAddressEl = document.getElementById("resolved-address");
 const currentTempEl = document.getElementById("current-temp");
 const weatherConditionEl = document.getElementById("weather-condition");
@@ -12,8 +15,8 @@ const windSpeedEl = document.getElementById("wind-speed");
 const uvIndexEl = document.getElementById("uv-index");
 const aqiEl = document.getElementById("aqi");
 const humidityEl = document.getElementById("humidity");
-
-// document.getElementById('resolve-location');
+const celsiusBtn = document.getElementById("celsius");
+const searchBtn = document.getElementById("search-btn");
 
 async function fetchWeatherData(location) {
   const response = await fetch(
@@ -23,11 +26,6 @@ async function fetchWeatherData(location) {
   return weatherData;
 }
 
-/* TODO
-   Also put fahrenheit versions of temperatures and
-   mph (miles per hour) version of wind speed to the
-   returned 
-*/
 function formatWeatherData(data) {
   return {
     resolvedAddress: data.resolvedAddress,
@@ -57,8 +55,7 @@ function renderWeatherData(data) {
   resolvedAddressEl.textContent = resolvedAddress;
 
   /* TODO: Also display weather icon */
-  const celsiusChecked = document.querySelector("#celsius").checked;
-  if (celsiusChecked) {
+  if (celsiusBtn.checked) {
     currentTempEl.textContent = `Temp: ${currentConditions.tempC} °C`;
     perceivedTempEl.textContent = `Feels Like: ${currentConditions.feelslikeC} °C`;
     windSpeedEl.textContent = `Wind Speed: ${currentConditions.windspeedKph} km/h`;
@@ -67,7 +64,6 @@ function renderWeatherData(data) {
     perceivedTempEl.textContent = `Feels Like: ${currentConditions.feelslikeF} °F`;
     windSpeedEl.textContent = `Wind Speed: ${currentConditions.windspeedMph} mph`;
   }
-
   weatherConditionEl.textContent = `Condition: ${currentConditions.conditions}`;
   uvIndexEl.textContent = `UV Index: ${currentConditions.uvindex} ${userFriendlyUVIndex(currentConditions.uvindex)}`;
   aqiEl.textContent = `AQI: ${currentConditions.aqius} ${userFriendlyAQI(currentConditions.aqius)}`;
@@ -83,14 +79,41 @@ formEl.addEventListener("submit", async (e) => {
   }
 
   try {
+    searchBtn.disabled = true;
+    renderLoading();
+
     const rawData = await fetchWeatherData(location);
-    const weatherData = formatWeatherData(rawData);
-    console.log(weatherData);
-    renderWeatherData(weatherData);
+    currentWeatherData = formatWeatherData(rawData);
+
+    renderWeatherData(currentWeatherData);
   } catch (err) {
     console.log(err);
+    currentWeatherData = null;
+
+    resolvedAddressEl.style.color = "#d9534f"; // make error text red
+    resolvedAddressEl.textContent = "Location not found or an error occurred.";
+  } finally {
+    searchBtn.disabled = false;
   }
 });
+
+unitToggleEl.addEventListener("change", () => {
+  if (currentWeatherData) {
+    renderWeatherData(currentWeatherData); // render the current weather data with the other unit user selected
+  }
+});
+
+function renderLoading() {
+  resolvedAddressEl.style.color = ""; // reset text color back to default
+  resolvedAddressEl.textContent = "Loading...";
+  currentTempEl.textContent = "";
+  weatherConditionEl.textContent = "";
+  perceivedTempEl.textContent = "";
+  windSpeedEl.textContent = "";
+  uvIndexEl.textContent = "";
+  aqiEl.textContent = "";
+  humidityEl.textContent = "";
+}
 
 function celciusToFahrenheit(c) {
   const f = c * (9 / 5) + 32;
