@@ -6,37 +6,39 @@
     <title>Skyteller</title>
   </head>
   <body>
-    <header>
-      <h1>Skyteller</h1>
-      <div id="unit-toggle">
-        <input type="radio" id="celsius" name="unit" value="C" checked />
-        <label for="celsius">°C</label>
+    <div id="app">
+      <header>
+        <h1>Skyteller</h1>
+        <div id="unit-toggle">
+          <input type="radio" id="celsius" name="unit" value="C" checked />
+          <label for="celsius">°C</label>
 
-        <input type="radio" id="fahrenheit" name="unit" value="F" />
-        <label for="fahrenheit">°F</label>
-      </div>
-    </header>
-    <main>
-      <form>
-        <input
-          type="search"
-          name="location"
-          placeholder="Search for a location..."
-          id="location-input"
-        />
-        <button>Search</button>
-      </form>
-      <div id="weather-card">
-
-        <h2 id="resolved-address"></h2>
-        <p id="current-temp"></p>
-        <p id="weather-condition"></p>
-        <p id="perceived-temp"></p>
-        <p id="wind-speed"></p>
-        <p id="uv-index"></p>
-        <p id="aqi"></p>
-        <p id="humidity"></p>
-      </div>
-    </main>
+          <input type="radio" id="fahrenheit" name="unit" value="F" />
+          <label for="fahrenheit">°F</label>
+        </div>
+      </header>
+      <main>
+        <form>
+          <input
+            type="search"
+            name="location"
+            placeholder="Search for a location..."
+            id="location-input"
+            required
+          />
+          <button id="search-btn">Search</button>
+        </form>
+        <div id="weather-card">
+          <h2 id="resolved-address"></h2>
+          <p id="current-temp"></p>
+          <p id="weather-condition"></p>
+          <p id="perceived-temp"></p>
+          <p id="wind-speed"></p>
+          <p id="uv-index"></p>
+          <p id="aqi"></p>
+          <p id="humidity"></p>
+        </div>
+      </main>
+    </div>
   </body>
 </html>
