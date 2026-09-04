@@ -127,3 +127,7 @@ header {
   align-items: center;
   gap: 10px;
 }
+
+.error {
+  color: #d9534f;
+}

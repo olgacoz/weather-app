@@ -90,7 +90,7 @@ formEl.addEventListener("submit", async (e) => {
     console.log(err);
     currentWeatherData = null;
 
-    resolvedAddressEl.style.color = "#d9534f"; // make error text red
+    resolvedAddressEl.classList.add('error');
     resolvedAddressEl.textContent = "Location not found or an error occurred.";
   } finally {
     searchBtn.disabled = false;
@@ -104,7 +104,7 @@ unitToggleEl.addEventListener("change", () => {
 });
 
 function renderLoading() {
-  resolvedAddressEl.style.color = ""; // reset text color back to default
+  resolvedAddressEl.classList.remove('error'); // remove possible error class
   resolvedAddressEl.textContent = "Loading...";
   currentTempEl.textContent = "";
   weatherConditionEl.textContent = "";
