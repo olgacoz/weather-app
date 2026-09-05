@@ -104,19 +104,18 @@ function clearFields() {
 }
 
 function formatUnits(conditions, isCelsius) {
-  const tempUnit = isCelsius ? "°C" : "°F";
-  const speedUnit = isCelsius ? "km/h" : "mph";
-
-  const tempVal = isCelsius ? conditions.tempC : conditions.tempF;
-  const feelsLikeVal = isCelsius
-    ? conditions.feelslikeC
-    : conditions.feelslikeF;
-  const windVal = isCelsius ? conditions.windspeedKph : conditions.windspeedMph;
+  if (isCelsius) {
+    return {
+      temp: `${conditions.tempC} °C`,
+      feelsLike: `${conditions.feelslikeC} °C`,
+      wind: `${conditions.windspeedKph} km/h`,
+    };
+  }
 
   return {
-    temp: `${tempVal} ${tempUnit}`,
-    feelsLike: `${feelsLikeVal} ${tempUnit}`,
-    wind: `${windVal} ${speedUnit}`,
+    temp: `${conditions.tempF} °F`,
+    feelsLike: `${conditions.feelslikeF} °F`,
+    wind: `${conditions.windspeedMph} mph`,
   };
 }
 
