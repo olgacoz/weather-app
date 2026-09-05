@@ -61,38 +61,17 @@ async function renderWeatherData(data) {
 
   elements.resolvedAddress.textContent = resolvedAddress;
 
-  // Reset & load icon
-  elements.iconContainer.replaceChildren();
-  if (currentConditions.icon) {
-    const iconUrl = await loadWeatherIcon(currentConditions.icon);
-    if (iconUrl) {
-      const img = document.createElement("img");
-      img.id = "weather-icon";
-      img.src = iconUrl;
-      img.alt = currentConditions.conditions || "Weather condition icon";
-      elements.iconContainer.appendChild(img);
-    }
-  }
-
-  // Unit formatting
-  const temp = isCelsius
-    ? `${currentConditions.tempC} °C`
-    : `${currentConditions.tempF} °F`;
-  const feelsLike = isCelsius
-    ? `${currentConditions.feelslikeC} °C`
-    : `${currentConditions.feelslikeF} °F`;
-  const wind = isCelsius
-    ? `${currentConditions.windspeedKph} km/h`
-    : `${currentConditions.windspeedMph} mph`;
+  const { temp, feelsLike, wind } = formatUnits(currentConditions, isCelsius);
 
   elements.currentTemp.textContent = `Temp: ${temp}`;
   elements.perceivedTemp.textContent = `Feels Like: ${feelsLike}`;
   elements.windSpeed.textContent = `Wind Speed: ${wind}`;
-
   elements.weatherCondition.textContent = `Condition: ${currentConditions.conditions}`;
   elements.uvIndex.textContent = `UV Index: ${currentConditions.uvindex} ${userFriendlyUVIndex(currentConditions.uvindex)}`;
   elements.aqi.textContent = `AQI: ${currentConditions.aqius} ${userFriendlyAQI(currentConditions.aqius)}`;
   elements.humidity.textContent = `Humidity: ${currentConditions.humidity}%`;
+
+  await renderWeatherIcon(currentConditions.icon, currentConditions.conditions);
 }
 
 function renderLoading() {
@@ -113,13 +92,46 @@ function renderError(message) {
 
 function clearFields() {
   elements.iconContainer.replaceChildren();
-  elements.currentTemp.textContent = "";
-  elements.weatherCondition.textContent = "";
-  elements.perceivedTemp.textContent = "";
-  elements.windSpeed.textContent = "";
-  elements.uvIndex.textContent = "";
-  elements.aqi.textContent = "";
-  elements.humidity.textContent = "";
+  [
+    elements.currentTemp,
+    elements.weatherCondition,
+    elements.perceivedTemp,
+    elements.windSpeed,
+    elements.uvIndex,
+    elements.aqi,
+    elements.humidity,
+  ].forEach((el) => (el.textContent = ""));
+}
+
+function formatUnits(conditions, isCelsius) {
+  const tempUnit = isCelsius ? "°C" : "°F";
+  const speedUnit = isCelsius ? "km/h" : "mph";
+
+  const tempVal = isCelsius ? conditions.tempC : conditions.tempF;
+  const feelsLikeVal = isCelsius
+    ? conditions.feelslikeC
+    : conditions.feelslikeF;
+  const windVal = isCelsius ? conditions.windspeedKph : conditions.windspeedMph;
+
+  return {
+    temp: `${tempVal} ${tempUnit}`,
+    feelsLike: `${feelsLikeVal} ${tempUnit}`,
+    wind: `${windVal} ${speedUnit}`,
+  };
+}
+
+async function renderWeatherIcon(iconName, altText) {
+  elements.iconContainer.replaceChildren();
+  if (!iconName) return;
+
+  const iconUrl = await loadWeatherIcon(iconName);
+  if (iconUrl) {
+    const img = document.createElement("img");
+    img.id = "weather-icon";
+    img.src = iconUrl;
+    img.alt = altText || "Weather condition icon";
+    elements.iconContainer.appendChild(img);
+  }
 }
 
 async function loadWeatherIcon(iconName) {
