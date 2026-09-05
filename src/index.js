@@ -38,11 +38,11 @@ function formatWeatherData(data) {
       aqius: data.currentConditions.aqius,
       conditions: data.currentConditions.conditions,
       feelslikeC: data.currentConditions.feelslike,
-      feelslikeF: celciusToFahrenheit(data.currentConditions.feelslike),
+      feelslikeF: celsiusToFahrenheit(data.currentConditions.feelslike),
       humidity: data.currentConditions.humidity,
       icon: data.currentConditions.icon,
       tempC: data.currentConditions.temp,
-      tempF: celciusToFahrenheit(data.currentConditions.temp),
+      tempF: celsiusToFahrenheit(data.currentConditions.temp),
       uvindex: data.currentConditions.uvindex,
       windspeedKph: data.currentConditions.windspeed,
       windspeedMph: kphToMph(data.currentConditions.windspeed),
@@ -143,7 +143,7 @@ async function loadWeatherIcon(iconName) {
   }
 }
 
-function celciusToFahrenheit(c) {
+function celsiusToFahrenheit(c) {
   const f = c * (9 / 5) + 32;
   return Math.round(f * 10) / 10;
 }
