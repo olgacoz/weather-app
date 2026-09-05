@@ -163,3 +163,31 @@ button,
 #unit-toggle label {
   cursor: pointer;
 }
+
+#weather-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#weather-main-display {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+#icon-container img {
+  width: 64px;
+  height: 64px;
+}
+
+.temp-big {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.temp-small {
+  font-size: 0.9rem;
+  color: rgb(85, 85, 85);
+}

@@ -1,13 +1,13 @@
 import "./styles.css";
 
 const API_KEY = "2LYJU4DK9EKDVFVNJ9ZNC9RYP";
-
 let currentWeatherData = null;
 
 const formEl = document.querySelector("form");
 const inputEl = document.getElementById("location-input");
 const unitToggleEl = document.getElementById("unit-toggle");
 const resolvedAddressEl = document.getElementById("resolved-address");
+const iconContainerEl = document.getElementById("icon-container");
 const currentTempEl = document.getElementById("current-temp");
 const weatherConditionEl = document.getElementById("weather-condition");
 const perceivedTempEl = document.getElementById("perceived-temp");
@@ -22,6 +22,11 @@ async function fetchWeatherData(location) {
   const response = await fetch(
     `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/today?unitGroup=metric&elements=add%3Aaqius&key=${API_KEY}&contentType=json`,
   );
+
+  if (!response.ok) {
+    throw new Error("Location not found");
+  }
+
   const weatherData = await response.json();
   return weatherData;
 }
@@ -45,16 +50,24 @@ function formatWeatherData(data) {
   };
 }
 
-/* TODO: When user toggles unit, automatically update the 
-   data without him to click Search button again.
-*/
-
-function renderWeatherData(data) {
+async function renderWeatherData(data) {
   const { currentConditions, resolvedAddress } = data;
 
   resolvedAddressEl.textContent = resolvedAddress;
 
-  /* TODO: Also display weather icon */
+  // İkonu dinamik olarak container içine ekleme
+  iconContainerEl.innerHTML = "";
+  if (currentConditions.icon) {
+    const iconUrl = await loadWeatherIcon(currentConditions.icon);
+    if (iconUrl) {
+      const img = document.createElement("img");
+      img.id = "weather-icon";
+      img.src = iconUrl;
+      img.alt = currentConditions.conditions || "Weather condition icon";
+      iconContainerEl.appendChild(img);
+    }
+  }
+
   if (celsiusBtn.checked) {
     currentTempEl.textContent = `Temp: ${currentConditions.tempC} °C`;
     perceivedTempEl.textContent = `Feels Like: ${currentConditions.feelslikeC} °C`;
@@ -64,6 +77,7 @@ function renderWeatherData(data) {
     perceivedTempEl.textContent = `Feels Like: ${currentConditions.feelslikeF} °F`;
     windSpeedEl.textContent = `Wind Speed: ${currentConditions.windspeedMph} mph`;
   }
+
   weatherConditionEl.textContent = `Condition: ${currentConditions.conditions}`;
   uvIndexEl.textContent = `UV Index: ${currentConditions.uvindex} ${userFriendlyUVIndex(currentConditions.uvindex)}`;
   aqiEl.textContent = `AQI: ${currentConditions.aqius} ${userFriendlyAQI(currentConditions.aqius)}`;
@@ -85,12 +99,13 @@ formEl.addEventListener("submit", async (e) => {
     const rawData = await fetchWeatherData(location);
     currentWeatherData = formatWeatherData(rawData);
 
-    renderWeatherData(currentWeatherData);
+    await renderWeatherData(currentWeatherData);
   } catch (err) {
     console.log(err);
     currentWeatherData = null;
 
-    resolvedAddressEl.classList.add('error');
+    iconContainerEl.innerHTML = "";
+    resolvedAddressEl.classList.add("error");
     resolvedAddressEl.textContent = "Location not found or an error occurred.";
   } finally {
     searchBtn.disabled = false;
@@ -99,13 +114,14 @@ formEl.addEventListener("submit", async (e) => {
 
 unitToggleEl.addEventListener("change", () => {
   if (currentWeatherData) {
-    renderWeatherData(currentWeatherData); // render the current weather data with the other unit user selected
+    renderWeatherData(currentWeatherData);
   }
 });
 
 function renderLoading() {
-  resolvedAddressEl.classList.remove('error'); // remove possible error class
+  resolvedAddressEl.classList.remove("error");
   resolvedAddressEl.textContent = "Loading...";
+  iconContainerEl.innerHTML = "";
   currentTempEl.textContent = "";
   weatherConditionEl.textContent = "";
   perceivedTempEl.textContent = "";
@@ -113,6 +129,18 @@ function renderLoading() {
   uvIndexEl.textContent = "";
   aqiEl.textContent = "";
   humidityEl.textContent = "";
+}
+
+async function loadWeatherIcon(iconName) {
+  try {
+    const iconModule = await import(
+      `./assets/icons/weather-icons/${iconName}.svg`
+    );
+    return iconModule.default;
+  } catch (err) {
+    console.warn(`Icon '${iconName}' not found.`, err);
+    return null;
+  }
 }
 
 function celciusToFahrenheit(c) {
