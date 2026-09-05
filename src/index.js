@@ -9,6 +9,7 @@ let currentWeatherData = null;
 
 const elements = {
   weatherCard: document.getElementById("weather-card"),
+  errorMessage: document.getElementById("error-message"),
   form: document.querySelector("form"),
   input: document.getElementById("location-input"),
   unitToggle: document.getElementById("unit-toggle"),
@@ -53,8 +54,8 @@ async function handleSearch(e) {
 }
 
 async function renderWeatherData(data) {
-  elements.weatherCard.classList.remove("is-loading", "has-error");
-  elements.resolvedAddress.classList.remove("error");
+  elements.errorMessage.hidden = true;
+  elements.weatherCard.hidden = false;
 
   const { currentConditions, resolvedAddress } = data;
   const isCelsius = elements.celsiusBtn.checked;
@@ -75,9 +76,15 @@ async function renderWeatherData(data) {
   }
 
   // Unit formatting
-  const temp = isCelsius ? `${currentConditions.tempC} °C` : `${currentConditions.tempF} °F`;
-  const feelsLike = isCelsius ? `${currentConditions.feelslikeC} °C` : `${currentConditions.feelslikeF} °F`;
-  const wind = isCelsius ? `${currentConditions.windspeedKph} km/h` : `${currentConditions.windspeedMph} mph`;
+  const temp = isCelsius
+    ? `${currentConditions.tempC} °C`
+    : `${currentConditions.tempF} °F`;
+  const feelsLike = isCelsius
+    ? `${currentConditions.feelslikeC} °C`
+    : `${currentConditions.feelslikeF} °F`;
+  const wind = isCelsius
+    ? `${currentConditions.windspeedKph} km/h`
+    : `${currentConditions.windspeedMph} mph`;
 
   elements.currentTemp.textContent = `Temp: ${temp}`;
   elements.perceivedTemp.textContent = `Feels Like: ${feelsLike}`;
@@ -90,19 +97,18 @@ async function renderWeatherData(data) {
 }
 
 function renderLoading() {
-  clearFields();
-  elements.weatherCard.classList.add("is-loading");
-  elements.weatherCard.classList.remove("has-error");
-  elements.resolvedAddress.classList.remove("error");
+  elements.errorMessage.hidden = true;
+  elements.errorMessage.textContent = "";
+  elements.weatherCard.hidden = false;
   elements.resolvedAddress.textContent = "Loading...";
+  clearFields();
 }
 
 function renderError(message) {
   clearFields();
-  elements.weatherCard.classList.remove("is-loading");
-  elements.weatherCard.classList.add("has-error");
-  elements.resolvedAddress.classList.add("error");
-  elements.resolvedAddress.textContent = message;
+  elements.weatherCard.hidden = true;
+  elements.errorMessage.hidden = false;
+  elements.errorMessage.textContent = message;
 }
 
 function clearFields() {
