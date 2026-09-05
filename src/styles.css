@@ -69,9 +69,7 @@ h6 {
   text-wrap: balance;
 }
 
-/*
-  10. Create a root stacking context
-*/
+/* 10. Create a root stacking context */
 #root,
 #__next {
   isolation: isolate;
@@ -99,12 +97,6 @@ body {
   background-color: var(--site-background-color);
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  
-}
-
 #app {
   padding: 30px;
   border-radius: var(--app-border-radius);
@@ -113,20 +105,22 @@ header {
   border: 1px solid black;
 }
 
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
 form {
   display: flex;
   gap: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
 }
 
 #location-input {
   flex: 1;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .error {
@@ -190,4 +184,16 @@ button,
 .temp-small {
   font-size: 0.9rem;
   color: rgb(85, 85, 85);
+}
+
+/* 1. Hide empty paragraphs and headings */
+#weather-card p:empty,
+#weather-card h2:empty {
+  display: none;
+}
+
+/* 2. Hide all children except resolved-address during error or loading states */
+#weather-card.has-error > :not(#resolved-address),
+#weather-card.is-loading > :not(#resolved-address) {
+  display: none;
 }
